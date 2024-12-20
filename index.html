@@ -4,16 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Open Graph Meta Tags for Discord Embeds -->
-    <meta property="og:title" content="links" />
-    <meta property="og:description" content="my links here wow very cool" />
-    <meta property="og:image" content="https://github.com/KraftAffix/assets/blob/main/image.png" />
-    <meta property="og:url" content="https://kraftaffix.github.io/website/" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="links" />
-    <meta name="twitter:description" content="my links here wow very cool" />
-    <meta name="twitter:image" content="https://github.com/KraftAffix/assets/blob/main/image.png" />
-
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -45,6 +35,7 @@
             color: white;
             text-align: center;
             z-index: 1;
+            transition: opacity 0.5s ease;
         }
         .header {
             font-size: 24px;
@@ -66,19 +57,38 @@
         .link:hover {
             text-decoration: underline;
         }
+        .toggle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        .fade-out {
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
     <canvas id="backgroundCanvas"></canvas>
     
     <!-- Content Box with Header and Body -->
-    <div class="content-box">
-        <div class="header">Links</div>
-        <div class="body">
-            <a href="https://www.youtube.com/@kraftaffix" class="link" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
-            <a href="https://www.twitch.tv/kraftaffix" class="link" target="_blank"><i class="fab fa-twitch"></i> Twitch</a>
-            <a href="https://x.com/kraftaffix" class="link" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
+    <div class="content-box" id="contentBox">
+        <div class="header" id="header">Currently Maintaining</div>
+        <div class="body" id="body">
+            <a href="https://github.com/KraftAffix/Wuthering-Waves-Download-Library" class="link" target="_blank">
+                <i class="fab fa-github"></i> Wuthering Waves Download Library
+            </a>
         </div>
+        <button class="toggle-button" onclick="toggleContent()">My Links</button>
     </div>
 
     <script>
@@ -182,6 +192,39 @@
         });
 
         window.addEventListener('resize', resizeCanvas);
+
+        // Content toggle functionality with animation
+        let isShowingLinks = false;
+
+        function toggleContent() {
+            const contentBox = document.getElementById('contentBox');
+            contentBox.classList.add('fade-out');
+
+            setTimeout(() => {
+                const header = document.getElementById('header');
+                const body = document.getElementById('body');
+                const toggleButton = document.querySelector('.toggle-button');
+
+                if (isShowingLinks) {
+                    header.textContent = 'Works';
+                    body.innerHTML = '<a href="https://github.com/KraftAffix/Wuthering-Waves-Download-Library" class="link" target="_blank">' +
+                                     '<i class="fab fa-github"></i> Wuthering Waves Download Library</a>';
+                    toggleButton.textContent = 'My Links';
+                } else {
+                    header.textContent = 'My Links';
+                    body.innerHTML = '<a href="https://www.youtube.com/@kraftaffix" class="link" target="_blank">' +
+                                     '<i class="fab fa-youtube"></i> YouTube</a>' +
+                                     '<a href="https://www.twitch.tv/kraftaffix" class="link" target="_blank">' +
+                                     '<i class="fab fa-twitch"></i> Twitch</a>' +
+                                     '<a href="https://x.com/kraftaffix" class="link" target="_blank">' +
+                                     '<i class="fab fa-twitter"></i> Twitter</a>';
+                    toggleButton.textContent = 'My Works';
+                }
+
+                isShowingLinks = !isShowingLinks;
+                contentBox.classList.remove('fade-out');
+            }, 500); // Match the CSS transition duration
+        }
 
         // Initialize the canvas and start the animation
         init();
