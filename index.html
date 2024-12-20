@@ -108,6 +108,9 @@
         const dots = [];
         const mouse = { x: null, y: null, radius: 50 };  // Set mouse radius to a smaller value (50)
 
+        const isMobile = window.innerWidth <= 768;  // Check if the device is mobile
+        const dotCount = isMobile ? 225 : 450;  // Use 225 dots on mobile, 450 on desktop
+
         class Dot {
             constructor(x, y) {
                 this.x = x;
@@ -158,7 +161,7 @@
 
         function init() {
             // Create initial dots and spread them out over the full canvas
-            for (let i = 0; i < 450; i++) {
+            for (let i = 0; i < dotCount; i++) {
                 const x = Math.random() * canvas.width;
                 const y = Math.random() * canvas.height;
                 dots.push(new Dot(x, y));
