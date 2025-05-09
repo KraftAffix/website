@@ -1,1 +1,290 @@
-asd
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: #333;
+            background-color: black;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .content-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            z-index: 1;
+            transition: opacity 0.5s ease;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE 10+ */
+        }
+        .content-box::-webkit-scrollbar {
+            width: 0px;
+            background: transparent; /* Chrome/Safari */
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .body {
+            margin-top: 15px;
+            font-size: 18px;
+        }
+        .link {
+            margin: 0 10px;
+            color: white;
+            text-decoration: none;
+        }
+        .link i {
+            font-size: 24px;
+            margin-right: 5px;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        .toggle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        .fade-out {
+            opacity: 0;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: white;
+            margin: 10px 0;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+<canvas id="backgroundCanvas"></canvas>
+
+<div class="content-box" id="contentBox">
+    <div class="header" id="header">Links</div>
+    <div class="body" id="body">
+        <a href="https://www.youtube.com/@kraftaffix" class="link" target="_blank">
+            <i class="fab fa-youtube"></i> YouTube
+        </a>
+        <a href="https://www.twitch.tv/kraftaffix" class="link" target="_blank">
+            <i class="fab fa-twitch"></i> Twitch
+        </a>
+        <a href="https://x.com/kraftaffix" class="link" target="_blank">
+            <i class="fab fa-twitter"></i> Twitter
+        </a>
+    </div>
+    <button class="toggle-button" onclick="toggleContent()">My Resume</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('backgroundCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const dots = [];
+    const mouse = { x: null, y: null, radius: 50 };
+    const isMobile = window.innerWidth <= 768;
+    const dotCount = isMobile ? 125 : 450;
+
+    class Dot {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.radius = 2;
+            this.speedX = (Math.random() - 0.5) * 0.5;
+            this.speedY = (Math.random() - 0.5) * 0.5;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fill();
+        }
+
+        connectToNearbyDots() {
+            for (let i = 0; i < dots.length; i++) {
+                const otherDot = dots[i];
+                if (otherDot === this) continue;
+                const dx = this.x - otherDot.x;
+                const dy = this.y - otherDot.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < mouse.radius) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(otherDot.x, otherDot.y);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function init() {
+        for (let i = 0; i < dotCount; i++) {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            dots.push(new Dot(x, y));
+        }
+    }
+
+    function handleDots() {
+        for (let dot of dots) {
+            dot.update();
+            dot.draw();
+            dot.connectToNearbyDots();
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        handleDots();
+        requestAnimationFrame(animate);
+    }
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        dots.length = 0;
+        init();
+    }
+
+    canvas.addEventListener('mousemove', (event) => {
+        mouse.x = event.x;
+        mouse.y = event.y;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        mouse.x = null;
+        mouse.y = null;
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    let isShowingLinks = true;
+
+    function toggleContent() {
+        const contentBox = document.getElementById('contentBox');
+        contentBox.classList.add('fade-out');
+
+        setTimeout(() => {
+            const header = document.getElementById('header');
+            const body = document.getElementById('body');
+            const toggleButton = document.querySelector('.toggle-button');
+
+            if (isShowingLinks) {
+                header.textContent = 'Resume';
+                body.innerHTML = `
+                    <div style="text-align: center; font-size: 16px; line-height: 1.6;">
+                        <img src="https://raw.githubusercontent.com/KraftAffix/assets/refs/heads/main/1746780016646.jpg" alt="Profile Picture" style="width: 120px; height: 120px; border-radius: 5%;"><br>
+                        <strong style="font-size: 50px;">kraftaffix</strong><br>
+                        IT Intern / Video Editor<br><br>
+                    </div>
+                    <div style="text-align: left; font-size: 16px; line-height: 1.6;">
+                        <strong>PROFILE</strong><br><hr>
+                        I’m a senior high school student with a strong interest in technology. I have hands-on experience on video editing, content creation, computer setup and hardware troubleshooting. I enjoy solving tech problems through PC gaming optimization, exploring creative tools, and working with both hardware and software.<br><br>
+                        Through self-directed learning, I've produced video content while mastering editing software and hardware maintenance. I’m eager to apply my problem-solving skills and tech creativity in a real-world role. I’m looking for opportunities to grow in video editing, digital media, or IT support where I can contribute my technical and creative abilities to a team.<br><br>
+
+                        <strong>HOBBIES</strong><br><hr>
+                        • Video Editing & Content Creation<br>
+                        • PC gaming & hardware optimization<br>
+                        • Exploring creative tech tools<br><br>
+
+                        <strong>EDUCATION</strong><br><hr>
+                        Tambo Central School<br>
+                        (2013 - 2020)<br><br>
+
+                        Iligan City East National Highschool<br>
+                        (2020 - 2024)<br>
+                        • Joined Special Program in the Arts, specifically Media Arts<br>
+                        • Member of [.mpeg] Productions<br>
+                        • Editor for [.mpeg] Productions (2022-2024)<br>
+                        • Created 4 short films and presented them during the Grand Expo<br><br>
+
+                        St. Michael's College – Basic Education Department<br>
+                        (2024 - 2026)<br><br>
+
+                        <strong>SKILLS</strong><br><hr>
+                        Hardware & IT<br>
+                        • Hardware Troubleshooting: Diagnosing/fixing components<br>
+                        • System Maintenance: Drivers, OS installs, performance tuning<br><br>
+                        Software & Tools<br>
+                        • Video Editing: DaVinci Resolve, CapCut<br>
+                        • Content Creation: OBS Studio, Canva<br><br>
+
+                        <strong>CONTACT</strong><br><hr>
+                        Discord: kraftaffix<br>
+                        Website:<a href="https://kraftaffix.github.io/website/" class="link" target="_blank">kraftaffix.github.io/website</a><br>
+                        Email: kraftaffix@gmail.com
+                    </div>
+                `;
+                toggleButton.textContent = 'My Links';
+            } else {
+                header.textContent = 'Links';
+                body.innerHTML = `
+                    <a href="https://www.youtube.com/@kraftaffix" class="link" target="_blank">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://www.twitch.tv/kraftaffix" class="link" target="_blank">
+                        <i class="fab fa-twitch"></i> Twitch
+                    </a>
+                    <a href="https://x.com/kraftaffix" class="link" target="_blank">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </a>
+                `;
+                toggleButton.textContent = 'My Resume';
+            }
+
+            isShowingLinks = !isShowingLinks;
+            contentBox.classList.remove('fade-out');
+        }, 500);
+    }
+
+    init();
+    animate();
+</script>
+</body>
+</html>
