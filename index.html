@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="kraftaffix's portolio" />
+    <meta name="keywords" content="kraftaffix, video editing, content creation, tech, portfolio, GitHub, YouTube, Twitch, PC gaming, hardware optimization" />
+    <meta name="author" content="kraftaffix" />
+    <meta property="og:title" content="kraftaffix's portfolio" />
+    <meta property="og:description" content="kraftaffix's portolio" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kraftaffix.vercel.app/" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/KraftAffix/assets/refs/heads/main/Seiha.gif" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@kraftaffix" />
+    <meta name="twitter:title" content="kraftaffix's portolio" />
+    <meta name="twitter:description" content="kraftaffix's portolio" />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/KraftAffix/assets/refs/heads/main/Seiha.gif" />
+    <title>kraftaffix's portolio</title>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/KraftAffix/assets/refs/heads/main/favicon.ico" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         body {
@@ -65,6 +80,7 @@
         }
         .toggle-button {
             margin-top: 20px;
+            margin-right: 10px;
             padding: 10px 20px;
             font-size: 16px;
             font-weight: bold;
@@ -107,9 +123,12 @@
         </a>
         <a href="https://anilist.co/user/KraftAffix/" class="link" target="_blank">
             <i class="fas fa-book"></i> AniList
-         </a>
+        </a>
     </div>
-    <button class="toggle-button" onclick="toggleContent()">About Me</button>
+    <div class="button-container" id="buttonContainer">
+        <button class="toggle-button" onclick="toggleContent('about')">About Me</button>
+        <button class="toggle-button" onclick="toggleContent('github')">GitHub</button>
+    </div>
 </div>
 
 <script>
@@ -207,24 +226,45 @@
 
     window.addEventListener('resize', resizeCanvas);
 
-    let isShowingLinks = true;
+    let currentSection = 'links';
 
-    function toggleContent() {
+    function toggleContent(section) {
         const contentBox = document.getElementById('contentBox');
+        const buttonContainer = document.getElementById('buttonContainer');
         contentBox.classList.add('fade-out');
 
         setTimeout(() => {
             const header = document.getElementById('header');
             const body = document.getElementById('body');
-            const toggleButton = document.querySelector('.toggle-button');
 
-            if (isShowingLinks) {
+            if (section === 'links') {
+                header.textContent = 'Links';
+                body.innerHTML = `
+                    <a href="https://www.youtube.com/@kraftaffix" class="link" target="_blank">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://www.twitch.tv/kraftaffix" class="link" target="_blank">
+                        <i class="fab fa-twitch"></i> Twitch
+                    </a>
+                    <a href="https://x.com/kraftaffix" class="link" target="_blank">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </a>
+                    <a href="https://anilist.co/user/KraftAffix/" class="link" target="_blank">
+                        <i class="fas fa-book"></i> AniList
+                    </a>
+                `;
+                buttonContainer.innerHTML = `
+                    <button class="toggle-button" onclick="toggleContent('about')">About Me</button>
+                    <button class="toggle-button" onclick="toggleContent('github')">GitHub</button>
+                `;
+                currentSection = 'links';
+            } else if (section === 'about') {
                 header.textContent = 'About Me';
                 body.innerHTML = `
                     <div style="text-align: center; font-size: 16px; line-height: 1.6;">
-                        <img src="https://raw.githubusercontent.com/KraftAffix/assets/refs/heads/main/Seiha.gif" alt="Profile Picture" style="width: 120px; height: 120px; border-radius: 5%;"><br>
-                        <strong style="font-size: 50px;">kraftaffix</strong><br>
-                        Freelancer<br><br>
+                        <img src="https://raw.githubusercontent.com/KraftAffix/assets/refs/heads/main/Seiha.gif" alt="KraftAffix profile picture, animated GIF" style="width: 120px; height: 120px; border-radius: 10px;"><br>
+                        <strong style="font-size: 3rem;">kraftaffix</strong><br>
+                        guy on the internet<br><br>
                     </div>
                     <div style="text-align: left; font-size: 16px; line-height: 1.6;">
                         <strong>PROFILE</strong><br><hr>
@@ -264,27 +304,25 @@
                         Email: kraftaffix@gmail.com
                     </div>
                 `;
-                toggleButton.textContent = 'My Links';
-            } else {
-                header.textContent = 'Links';
+                buttonContainer.innerHTML = `
+                    <button class="toggle-button" onclick="toggleContent('links')">My Links</button>
+                    <button class="toggle-button" onclick="toggleContent('github')">GitHub</button>
+                `;
+                currentSection = 'about';
+            } else if (section === 'github') {
+                header.textContent = 'My Repositories';
                 body.innerHTML = `
-                    <a href="https://www.youtube.com/@kraftaffix" class="link" target="_blank">
-                        <i class="fab fa-youtube"></i> YouTube
-                    </a>
-                    <a href="https://www.twitch.tv/kraftaffix" class="link" target="_blank">
-                        <i class="fab fa-twitch"></i> Twitch
-                    </a>
-                    <a href="https://x.com/kraftaffix" class="link" target="_blank">
-                        <i class="fab fa-twitter"></i> Twitter
-                    </a>
-                    <a href="https://anilist.co/user/KraftAffix/" class="link" target="_blank">
-                        <i class="fas fa-book"></i> AniList
+                    <a href="https://github.com/KraftAffix/WuWa-Configs-LowEnd" class="link" target="_blank">
+                        <i class="fab fa-github"></i> WuWa-Configs-LowEnd
                     </a>
                 `;
-                toggleButton.textContent = 'About Me';
+                buttonContainer.innerHTML = `
+                    <button class="toggle-button" onclick="toggleContent('links')">My Links</button>
+                    <button class="toggle-button" onclick="toggleContent('about')">About Me</button>
+                `;
+                currentSection = 'github';
             }
 
-            isShowingLinks = !isShowingLinks;
             contentBox.classList.remove('fade-out');
         }, 500);
     }
@@ -294,4 +332,3 @@
 </script>
 </body>
 </html>
-
